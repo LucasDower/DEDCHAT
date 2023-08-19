@@ -1,16 +1,14 @@
 'use client';
 
-import Image from 'next/image'
 import { KeyboardEvent, useEffect, useState } from 'react'
-import { ChatMessage, GameStateMessage } from '../../../server/src/index';
+import { ChatMessage, ChatStateSync } from '../../../common/types';
 
 let socket: (WebSocket | null) = null;
 
 export default function Home() {
-    const [gameState, setGameState] = useState<GameStateMessage>();
+    const [gameState, setGameState] = useState<ChatStateSync>();
     const [chat, setChat] = useState<ChatMessage[]>([]);
     const [message, setMessage] = useState<string>();
-
 
     useEffect(() => {
         setChat([]);
@@ -23,7 +21,7 @@ export default function Home() {
 
         // Listen for messages
         socket.addEventListener("message", (event) => {
-            const newGameState: GameStateMessage = JSON.parse(event.data);
+            const newGameState: ChatStateSync = JSON.parse(event.data); // TODO: Naughty
             setGameState(newGameState);
             setChat(chat => [...chat, ...newGameState.messages]);
         });
@@ -56,7 +54,7 @@ export default function Home() {
                 <div className="border flex flex-col bg-gray-100 flex-grow">
                     {chat.map(x => x.sender.type === 'server'
                         ? <div className='font-mono text-gray-400' key={x.uuid}>[SERVER]: {x.message}</div>
-                        : <div className='font-mono' key={x.uuid}>[{x.sender.display_name}]: {x.message}</div>)}
+                        : <div className='font-mono' key={x.uuid}>[{x.sender.displayName}]: {x.message}</div>)}
                 </div>
                 <textarea className="resize-none border p-4 flex h-24 bg-gray-100" value={message} onChange={(e) => { setMessage(e.target.value) }} placeholder='Type your message...' onKeyDown={handleMessageKeyDown}>
                 </textarea>
@@ -64,8 +62,8 @@ export default function Home() {
             <div className="bg-white p-5 rounded-lg border space-y-3 w-96 flex flex-col">
                 <p>Lobby ({(gameState?.others.length ?? 0) + 1})</p>
                 <div className="border flex flex-col bg-gray-100 flex-grow">
-                    {<div className='font-mono font-bold' key={gameState?.you.display_name}>{gameState?.you.display_name}</div>}
-                    {gameState?.others.map(x => <div className='font-mono' key={x.display_name}>{x.display_name}</div>)}
+                    {<div className='font-mono font-bold' key={gameState?.you.displayName}>{gameState?.you.displayName}</div>}
+                    {gameState?.others.map(x => <div className='font-mono' key={x.displayName}>{x.displayName}</div>)}
                 </div>
             </div>
         </div>
