@@ -10,7 +10,6 @@ export type ChatMessage = {
 };
 
 export type ChatStateSync = {
-    token: string,
     you: User,
     others: User[],
     messages: ChatMessage[]

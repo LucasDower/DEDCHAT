@@ -93,7 +93,6 @@ setInterval(() => {
         }
 
         const response: ChatStateSync = {
-            token: connection.iuser.token,
             you: {
                 uuid: connection.iuser.uuid,
                 displayName: connection.iuser.displayName,
